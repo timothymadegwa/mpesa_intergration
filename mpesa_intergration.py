@@ -23,13 +23,22 @@ access_token = get_token()
 print(access_token)
 
 def lipa(token, shortcode, msisdn, amount):
-    api_url = "https://sandbox.safaricom.co.ke/mpesa/c2b/v1/simulate"
-    headers = {"Authorization": "Bearer %s" % token}
-    request = {"ShortCode":shortcode,
-        "CommandID":"CustomerPayBillOnline",
-        "Amount":amount,
-        "Msisdn":msisdn,
-        "BillRefNumber":" "}
+    
+    api_url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
+    headers = { "Authorization": "Bearer %s" % token }
+    request = {
+        "BusinessShortCode": shortcode,
+        "Password": " ",
+        "Timestamp": " ",
+        "TransactionType": "CustomerPayBillOnline",
+        "Amount": " ",
+        "PartyA": msisdn,
+        "PartyB": shortcode,
+        "PhoneNumber": msisdn,
+        "CallBackURL": "https://ip_address:port/callback",
+        "AccountReference": " ",
+        "TransactionDesc": " "
+    }
   
     return requests.post(api_url, json = request, headers=headers).json()
 
