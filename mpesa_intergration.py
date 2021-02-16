@@ -9,6 +9,15 @@ from flask import Flask
 
 app = Flask(__name__)
 
+key = os.environ['MPESA_KEY']
+secret = os.environ['MPESA_SECRET']
+phone = "254708374149"
+test_shortcode = "174379"
+passkey = os.environ['MPESA_PASSKEY']
+
+consumer_key = key
+consumer_secret = secret
+
 @app.route('/')
 def index():
     return 'running....'
@@ -19,19 +28,8 @@ def authenticate():
 
 @app.route('/payment', methods=['GET','POST'])
 def payment():
-    return lipa(access_token, test_shortcode, phone, 10)
+    return lipa(access_token, test_shortcode, phone, 1)
 
-
-key = os.environ['MPESA_KEY']
-secret = os.environ['MPESA_SECRET']
-phone = "254708374149"
-
-
-test_shortcode = "174379"
-passkey = os.environ['MPESA_PASSKEY']
-
-consumer_key = key
-consumer_secret = secret
 def get_token():
     api_URL = "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials"
   
@@ -58,15 +56,12 @@ def lipa(token, shortcode, msisdn, amount):
         "PartyA": msisdn,
         "PartyB": shortcode,
         "PhoneNumber": msisdn,
-        "CallBackURL": "https://192.168.200.15:port/callback",
+        "CallBackURL": "https://sandbox.safaricom.co.ke/mpesa/",
         "AccountReference": "account",
         "TransactionDesc": "test"
     }
   
     return requests.post(api_url, json = request, headers=headers).json()
-
-response = lipa(access_token, test_shortcode, phone, 10)
-print(response)
 
 if __name__ == "__main__":
     app.run(debug=False)
