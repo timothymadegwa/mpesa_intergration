@@ -5,6 +5,23 @@ import json
 import requests
 from requests.auth import HTTPBasicAuth
 
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return 'running....'
+
+@app.route('/auth', methods=['GET',])
+def authenticate():
+    return get_token()
+
+@app.route('/payment', methods=['GET','POST'])
+def payment():
+    return lipa(access_token, test_shortcode, phone, 10)
+
+
 key = os.environ['MPESA_KEY']
 secret = os.environ['MPESA_SECRET']
 phone = "254708374149"
@@ -50,3 +67,6 @@ def lipa(token, shortcode, msisdn, amount):
 
 response = lipa(access_token, test_shortcode, phone, 10)
 print(response)
+
+if __name__ == "__main__":
+    app.run(debug=False)
