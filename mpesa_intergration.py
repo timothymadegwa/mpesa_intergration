@@ -5,7 +5,7 @@ import json
 import requests
 from requests.auth import HTTPBasicAuth
 
-from flask import Flask
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
@@ -22,13 +22,22 @@ consumer_secret = secret
 def index():
     return 'running....'
 
-@app.route('/auth', methods=['GET',])
-def authenticate():
-    return get_token()
-
 @app.route('/payment', methods=['GET','POST'])
 def payment():
+    access_token = get_token()
     return lipa(access_token, test_shortcode, phone, 1)
+
+@app.route('/confirmation', methods=['GET','POST'])
+def confirm():
+    data = request.get_json()
+
+    with open('confirmation.json', 'a') as f:
+        f.write(jsonify(data))
+    return {
+        "ResultCode": 0,
+        "ResultDesc" : "Accepted"
+    }
+    
 
 def get_token():
     api_URL = "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials"
@@ -36,7 +45,7 @@ def get_token():
     token = requests.get(api_URL, auth=HTTPBasicAuth(consumer_key, consumer_secret)).json()
     return token['access_token']
 
-access_token = get_token()
+
 
 def lipa(token, shortcode, msisdn, amount):
     time = datetime.now()
